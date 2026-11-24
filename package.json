@@ -1,0 +1,26 @@
+{
+  "name": "loy-krathong-online",
+  "version": "1.0.0",
+  "description": "เว็บลอยกระทงออนไลน์ (Online Loy Krathong) พร้อมปล่อยกระทง อธิษฐาน และ Deploy ขึ้น GitHub Pages",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node server.js",
+    "serve": "node server.js",
+    "test": "node test-server.js"
+  },
+  "keywords": [
+    "loy-krathong",
+    "thailand",
+    "festival",
+    "github-pages",
+    "nodejs"
+  ],
+  "author": "Student",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

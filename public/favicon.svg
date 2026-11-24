@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <radialGradient id="favFlame" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#ffb703"/>
+      <stop offset="100%" stop-color="#fb8500"/>
+    </radialGradient>
+  </defs>
+  <!-- ผิวน้ำ -->
+  <ellipse cx="32" cy="54" rx="26" ry="6" fill="#0d2149"/>
+  <!-- ฐานกระทงใบตอง -->
+  <path d="M 12 44 C 12 56 52 56 52 44 Z" fill="#2d6a4f"/>
+  <ellipse cx="32" cy="44" rx="20" ry="7" fill="#52b788"/>
+  <!-- ดอกไม้ -->
+  <circle cx="22" cy="44" r="5" fill="#ffd166"/>
+  <circle cx="42" cy="44" r="5" fill="#ff758f"/>
+  <circle cx="32" cy="46" r="5" fill="#e76f51"/>
+  <!-- เทียน -->
+  <rect x="30" y="24" width="4" height="18" rx="1" fill="#fff3b0"/>
+  <!-- เปลวไฟ -->
+  <ellipse cx="32" cy="18" rx="5" ry="9" fill="url(#favFlame)"/>
+</svg>

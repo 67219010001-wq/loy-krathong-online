@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="เว็บลอยกระทงออนไลน์ สืบสานประเพณีไทย ขอขมาพระแม่คงคา เลือกแบบกระทง กรอกชื่อ และอธิษฐานส่งความสุข">
+  <meta name="theme-color" content="#060919">
+  <title>🌕 ลอยกระทงออนไลน์ | Loy Krathong Festival</title>
+  <link rel="icon" type="image/svg+xml" href="./public/favicon.svg">
+  <link rel="stylesheet" href="./src/css/style.css">
+  <link rel="stylesheet" href="./src/css/krathong.css">
+</head>
+<body>
+  <!-- ฉากค่ำคืนและสายน้ำ -->
+  <main class="scene-container">
+    <!-- ท้องฟ้ากลางคืน พระจันทร์ และดวงดาว -->
+    <section class="sky-layer" aria-label="ท้องฟ้ายามค่ำคืน">
+      <canvas id="starsCanvas" class="stars-canvas"></canvas>
+      
+      <!-- พระจันทร์เต็มดวง -->
+      <div class="full-moon" title="พระจันทร์วันเพ็ญเดือน 12">
+        <div class="moon-crater crater-1"></div>
+        <div class="moon-crater crater-2"></div>
+        <div class="moon-crater crater-3"></div>
+      </div>
+
+      <!-- เมฆลอย -->
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+
+      <!-- โคมลอยประดับ -->
+      <div id="lanternsContainer" class="sky-lanterns-container"></div>
+
+      <!-- Canvas แสดงพลุ -->
+      <canvas id="fireworksCanvas"></canvas>
+    </section>
+
+    <!-- แม่น้ำและกระทง -->
+    <section class="river-layer" aria-label="แม่น้ำสายน้ำแห่งศรัทธา">
+      <!-- แสงสะท้อนจันทร์บนผิวน้ำ -->
+      <div class="moon-reflection"></div>
+
+      <!-- ระลอกคลื่นน้ำ -->
+      <div class="river-waves">
+        <div class="wave-line wave-1"></div>
+        <div class="wave-line wave-2"></div>
+        <div class="wave-line wave-3"></div>
+        <div class="wave-line wave-4"></div>
+      </div>
+
+      <!-- คอนเทนเนอร์สำหรับวางกระทงที่ลอยในน้ำ -->
+      <div id="riverContainer" class="river-container"></div>
+
+      <!-- ริมตลิ่งล่างสุด -->
+      <div class="river-bank"></div>
+    </section>
+  </main>
+
+  <!-- แถบด้านบน (Top Navigation Bar) -->
+  <header class="top-header">
+    <div class="brand-badge">
+      <span class="brand-icon">🪷</span>
+      <div class="brand-text">
+        <h1>ลอยกระทงออนไลน์</h1>
+        <p>สืบสานประเพณีไทย ขอขมาพระแม่คงคา</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <!-- ตัวนับจำนวนกระทง -->
+      <div class="stat-chip" title="จำนวนกระทงที่ลอยในคืนนี้">
+        <span>✨</span>
+        <span id="totalCount">0</span>
+        <span style="font-size: 0.75rem; color: #cbd5e1;">กระทง</span>
+      </div>
+
+      <!-- ปุ่มเปิด/ปิดเสียงเพลง -->
+      <button id="btnToggleMusic" class="btn-icon" title="เปิด/ปิดเสียงดนตรีไทย" aria-label="เปิด/ปิดเสียงดนตรีไทย">
+        <span id="musicIcon">🔇</span>
+      </button>
+
+      <!-- ปุ่มเกี่ยวกับโครงการ -->
+      <button id="btnOpenAbout" class="btn-icon" title="เกี่ยวกับเว็บลอยกระทงออนไลน์" aria-label="ข้อมูลโครงการ">
+        <span>ℹ️</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- แถบปุ่มสร้างกระทงด้านล่าง (Bottom Dock) -->
+  <aside class="bottom-dock">
+    <div class="dock-hint">👆 คลิกที่ผืนฟ้าเพื่อจุดพลุ หรือคลิกกระทงในน้ำเพื่ออ่านคำอธิษฐาน</div>
+    <button id="btnOpenCreate" class="btn-create-krathong" aria-haspopup="dialog">
+      <span class="btn-sparkle">✨</span>
+      <span>สร้างกระทงของฉัน</span>
+      <span class="btn-sparkle">🪷</span>
+    </button>
+  </aside>
+
+  <!-- ==================== Modals ==================== -->
+
+  <!-- Modal 1: สร้างกระทงและกรอกคำอธิษฐาน -->
+  <div id="modalCreate" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalCreateTitle">
+    <div class="modal-card">
+      <button id="btnCloseModal" class="modal-close-btn" aria-label="ปิดหน้าต่าง">&times;</button>
+      
+      <div class="modal-header">
+        <h2 id="modalCreateTitle">🪷 สร้างและปล่อยกระทง</h2>
+        <p>เลือกแบบกระทง กรอกชื่อ และเขียนคำอธิษฐานส่งสู่สายน้ำ</p>
+      </div>
+
+      <form id="formCreateKrathong">
+        <!-- เลือกแบบกระทง -->
+        <div class="form-group">
+          <label class="form-label">1. เลือกแบบกระทงที่ต้องการ <span>*</span></label>
+          <div id="krathongPicker" class="krathong-picker-grid">
+            <!-- Rendered by JavaScript -->
+          </div>
+        </div>
+
+        <!-- กรอกชื่อผู้ลอย -->
+        <div class="form-group">
+          <label for="inputName" class="form-label">2. ชื่อผู้ลอยกระทง <span>*</span></label>
+          <input type="text" id="inputName" class="form-input" placeholder="เช่น น้องขวัญข้าว, ครอบครัวใจดี" maxlength="40" required autocomplete="off">
+        </div>
+
+        <!-- กรอกคำอธิษฐาน -->
+        <div class="form-group">
+          <label for="textareaWish" class="form-label">3. พิมพ์คำอธิษฐาน <span>*</span></label>
+          <textarea id="textareaWish" class="form-textarea" placeholder="พิมพ์คำอธิษฐาน หรือขอขมาพระแม่คงคาที่นี่..." maxlength="250" required></textarea>
+          
+          <!-- ชิปคำอธิษฐานยอดนิยม -->
+          <div class="preset-wishes-wrap">
+            <span style="font-size: 0.72rem; color: #94a3b8; width: 100%; margin-bottom: 2px;">💡 เลือกคำอธิษฐานยอดนิยมด่วน:</span>
+            <div id="presetWishesWrap" style="display: flex; flex-wrap: wrap; gap: 6px;">
+              <!-- Rendered by JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ปุ่มส่งกระทง -->
+        <button type="submit" class="btn-submit-release">
+          จุดเทียนแล้วปล่อยกระทงลงน้ำ 🌊
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: อ่านคำอธิษฐานของกระทงในน้ำ -->
+  <div id="modalWishDetail" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-card wish-detail-card" style="max-width: 440px;">
+      <button id="btnCloseWish" class="modal-close-btn" aria-label="ปิดหน้าต่าง">&times;</button>
+
+      <div id="wishAvatar" class="wish-avatar-wrap"></div>
+      <div id="wishOwnerName" class="wish-owner-name">ชื่อผู้ลอย</div>
+      <div id="wishTime" class="wish-time">เวลาที่ลอย</div>
+
+      <div id="wishQuote" class="wish-quote-box">
+        “ข้อความคำอธิษฐาน...”
+      </div>
+
+      <div class="wish-card-footer">
+        <button id="btnLike" class="btn-like">
+          <span>❤️ ร่วมอนุโมทนาบุญ</span>
+          <span id="likeCount">1</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: การ์ดที่ระลึกสำหรับบันทึก/แชร์ -->
+  <div id="modalSouvenir" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 480px; text-align: center;">
+      <button id="btnCloseSouvenir" class="modal-close-btn" aria-label="ปิด">&times;</button>
+      
+      <div id="souvenirCard" class="souvenir-preview">
+        <div class="souvenir-corner corner-tl"></div>
+        <div class="souvenir-corner corner-tr"></div>
+        <div class="souvenir-corner corner-bl"></div>
+        <div class="souvenir-corner corner-br"></div>
+        <div id="souvenirPreviewContent"></div>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button id="btnDownloadCard" class="btn-submit-release" style="margin-top: 0; padding: 12px 24px; font-size: 1rem;">
+          📥 บันทึกการ์ดที่ระลึก (PNG)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: ข้อมูลโครงการและคำแนะนำ -->
+  <div id="modalAbout" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-card" style="max-width: 520px;">
+      <button id="btnCloseAbout" class="modal-close-btn" aria-label="ปิด">&times;</button>
+      
+      <div class="modal-header">
+        <h2>🌕 เกี่ยวกับลอยกระทงออนไลน์</h2>
+        <p>โครงงานพัฒนาเว็บแอปพลิเคชัน & Deploy สู่ GitHub Pages</p>
+      </div>
+
+      <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.7; color: #cbd5e1;">
+        <p style="margin-bottom: 12px;">
+          เว็บลอยกระทงออนไลน์นี้สร้างขึ้นเพื่อสืบสานประเพณีไทยอันดีงาม ส่งเสริมการขอขมาพระแม่คงคา โดยร่วมรณรงค์ลดขยะในแม่น้ำลำคลองผ่านระบบออนไลน์ 100%
+        </p>
+
+        <h4 style="color: #ffd166; font-family: var(--font-thai); font-size: 1.05rem; margin: 14px 0 6px;">✨ ฟีเจอร์เด่น:</h4>
+        <ul style="padding-left: 20px; margin-bottom: 14px;">
+          <li>เลือกแบบกระทงได้ 5 สไตล์ (ใบตอง, ดอกบัว, กะลา, ขนมปัง, และดอกไม้หลากสี)</li>
+          <li>กรอกชื่อและเขียนคำอธิษฐานส่วนตัว พร้อมเลือกข้อความมงคลด่วน</li>
+          <li>กระทงลอยตามสายน้ำแบบ Real-time พร้อมแสงเทียนกระพริบไหว</li>
+          <li>คลิกกระทงในแม่น้ำเพื่ออ่านคำอธิษฐานและกดส่งหัวใจให้กันได้</li>
+          <li>คลิกบนท้องฟ้าเพื่อจุดพลุดอกไม้ไฟหลากสีสัน</li>
+          <li>เสียงดนตรีไทยสังเคราะห์ด้วย Web Audio API (ไม่ต้องพึ่งไฟล์เน็ต)</li>
+          <li>สร้างและดาวน์โหลดบัตรที่ระลึกการลอยกระทงเป็นไฟล์ภาพ</li>
+        </ul>
+
+        <div style="background: rgba(255,209,102,0.1); border: 1px solid rgba(255,209,102,0.3); border-radius: 12px; padding: 12px 16px; margin-top: 14px; font-size: 0.85rem;">
+          💡 <strong>เทคโนโลยีที่ใช้:</strong> HTML5, CSS3 Glassmorphism, JavaScript ES Modules, Canvas 2D, Web Audio API, Node.js HTTP Server, Vite, และ GitHub Pages CI/CD Action
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/js/app.js"></script>
+</body>
+</html>
